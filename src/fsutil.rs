@@ -4,7 +4,7 @@
 //! same folder, flushed to disk, then renamed over the target. A crash or power
 //! loss leaves either the old file or the complete new one, never a torn mix.
 
-use std::fs::{self, File};
+use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::sync::OnceLock;
@@ -46,7 +46,7 @@ pub fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
 /// Windows has no equivalent call and commits renames on its own).
 fn sync_dir(dir: &Path) {
     #[cfg(unix)]
-    if let Ok(handle) = File::open(dir) {
+    if let Ok(handle) = fs::File::open(dir) {
         let _ = handle.sync_all();
     }
     #[cfg(not(unix))]
